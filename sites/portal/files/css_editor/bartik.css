@@ -1,0 +1,25 @@
+.simplelogin-wrapper {
+  font-family:Arial
+}
+.simplelogin-logo img {
+    max-width: 20%;
+}
+.ipe-categories .ipe-category[data-category="Custom"],.ipe-categories .ipe-category[data-category="Chaos Tools"] ,
+.ipe-categories .ipe-category[data-category="Dashboard"] ,
+.ipe-categories .ipe-category[data-category="Devel"] ,
+.ipe-categories .ipe-category[data-category="Help"] ,
+.ipe-categories .ipe-category[data-category="Social Auth"] 
+.ipe-categories .ipe-category[data-category="System"],
+.ipe-categories .ipe-category[data-category="Menus"] , 
+.ipe-categories .ipe-category[data-category="Social Auth"] ,
+.ipe-categories .ipe-category[data-category="core"] 
+{
+    display: none;
+}
+
+.filter-help { 
+    display: none;
+}
+#block-comments, #block-views-block-comments-recent-block-1 {
+      border-top: 1px solid #999999;
+}

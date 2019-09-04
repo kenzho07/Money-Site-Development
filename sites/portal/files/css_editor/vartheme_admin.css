@@ -1,0 +1,17 @@
+.popular-tags .tag-terms a {
+  padding: 5px;
+    background-color: #ccc;
+    border-radius: 5px;
+}
+.ipe-categories .ipe-category[data-category="Custom"],.ipe-categories .ipe-category[data-category="Chaos Tools"] ,
+.ipe-categories .ipe-category[data-category="Dashboard"] ,
+.ipe-categories .ipe-category[data-category="Devel"] ,
+.ipe-categories .ipe-category[data-category="Help"] ,
+.ipe-categories .ipe-category[data-category="Social Auth"] 
+.ipe-categories .ipe-category[data-category="System"],
+.ipe-categories .ipe-category[data-category="Menus"] , 
+.ipe-categories .ipe-category[data-category="Social Auth"] ,
+.ipe-categories .ipe-category[data-category="core"] 
+{
+    display: none;
+}

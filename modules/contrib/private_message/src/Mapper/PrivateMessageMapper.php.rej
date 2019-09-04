@@ -1,0 +1,19 @@
+***************
+*** 255,262 ****
+        'ON message.id = thread_message.private_messages_target_id ' .
+        'JOIN {private_message_threads} AS thread ' .
+        'ON thread_message.entity_id = thread.id ' .
+-       'JOIN {private_message_thread__members} AS member ' .
+-       'ON member.entity_id = thread.id AND member.members_target_id = :uid ' .
+        'JOIN {private_message_thread__last_access_time} AS last_access ' .
+        'ON last_access.entity_id = thread.id ' .
+        'JOIN {pm_thread_access_time} as access_time ' .
+--- 255,262 ----
+        'ON message.id = thread_message.private_messages_target_id ' .
+        'JOIN {private_message_threads} AS thread ' .
+        'ON thread_message.entity_id = thread.id ' .
++       'JOIN {private_message_thread__members} AS thread_member ' .
++       'ON thread_member.entity_id = thread.id AND thread_member.members_target_id = :uid ' .
+        'JOIN {private_message_thread__last_access_time} AS last_access ' .
+        'ON last_access.entity_id = thread.id ' .
+        'JOIN {pm_thread_access_time} as access_time ' .

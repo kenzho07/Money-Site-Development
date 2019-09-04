@@ -1,0 +1,68 @@
+diff --git a/src/Mapper/PrivateMessageMapper.php b/src/Mapper/PrivateMessageMapper.php
+index 6a268cf..b7b247c 100644
+--- a/src/Mapper/PrivateMessageMapper.php
++++ b/src/Mapper/PrivateMessageMapper.php
+@@ -63,7 +63,7 @@ class PrivateMessageMapper implements PrivateMessageMapperInterface {
+ 
+     // Next, do a left join for all rows that don't contain the users, and
+     // ensure that there aren't any additional users in selected threads.
+-    $alias = $query->leftJoin('private_message_thread__members', 'member', 'member.entity_id = pm.id AND member.members_target_id NOT IN (:uids[])', [':uids[]' => $uids]);
++    $alias = $query->leftJoin('private_message_thread__members', 'thread_member', 'thread_member.entity_id = pm.id AND thread_member.members_target_id NOT IN (:uids[])', [':uids[]' => $uids]);
+     $query->isNull($alias . '.members_target_id');
+ 
+     return $query->execute()->fetchField();
+@@ -75,8 +75,8 @@ class PrivateMessageMapper implements PrivateMessageMapperInterface {
+   public function getFirstThreadIdForUser(UserInterface $user) {
+     return $this->database->queryRange('SELECT thread.id ' .
+       'FROM {private_message_threads} AS thread ' .
+-      'JOIN {private_message_thread__members} AS member ' .
+-      'ON member.entity_id = thread.id AND member.members_target_id = :uid ' .
++      'JOIN {private_message_thread__members} AS thread_member ' .
++      'ON thread_member.entity_id = thread.id AND thread_member.members_target_id = :uid ' .
+       'JOIN {private_message_thread__private_messages} AS thread_messages ' .
+       'ON thread_messages.entity_id = thread.id ' .
+       'JOIN {private_messages} AS messages ' .
+@@ -99,8 +99,8 @@ class PrivateMessageMapper implements PrivateMessageMapperInterface {
+   public function getThreadIdsForUser(UserInterface $user, $count, $timestamp = FALSE) {
+     $query = 'SELECT DISTINCT(thread.id), MAX(thread.updated) ' .
+       'FROM {private_message_threads} AS thread ' .
+-      'JOIN {private_message_thread__members} AS member ' .
+-      'ON member.entity_id = thread.id AND member.members_target_id = :uid ' .
++      'JOIN {private_message_thread__members} AS thread_member ' .
++      'ON thread_member.entity_id = thread.id AND thread_member.members_target_id = :uid ' .
+       'JOIN {private_message_thread__private_messages} AS thread_messages ' .
+       'ON thread_messages.entity_id = thread.id ' .
+       'JOIN {private_messages} AS messages ' .
+@@ -134,8 +134,8 @@ class PrivateMessageMapper implements PrivateMessageMapperInterface {
+   public function checkForNextThread(UserInterface $user, $timestamp) {
+     $query = 'SELECT DISTINCT(thread.id) ' .
+       'FROM {private_message_threads} AS thread ' .
+-      'JOIN {private_message_thread__members} AS member ' .
+-      'ON member.entity_id = thread.id AND member.members_target_id = :uid ' .
++      'JOIN {private_message_thread__members} AS thread_member ' .
++      'ON thread_member.entity_id = thread.id AND thread_member.members_target_id = :uid ' .
+       'JOIN {private_message_thread__private_messages} AS thread_messages ' .
+       'ON thread_messages.entity_id = thread.id ' .
+       'JOIN {private_messages} AS messages ' .
+@@ -197,8 +197,8 @@ class PrivateMessageMapper implements PrivateMessageMapperInterface {
+   public function getUpdatedInboxThreadIds(array $existingThreadIds, $count = FALSE) {
+     $query = 'SELECT DISTINCT(thread.id), updated ' .
+       'FROM {private_message_threads} AS thread ' .
+-      'JOIN {private_message_thread__members} AS member ' .
+-      'ON member.entity_id = thread.id AND member.members_target_id = :uid ' .
++      'JOIN {private_message_thread__members} AS thread_member ' .
++      'ON thread_member.entity_id = thread.id AND thread_member.members_target_id = :uid ' .
+       'JOIN {private_message_thread__private_messages} AS thread_messages ' .
+       'ON thread_messages.entity_id = thread.id ' .
+       'JOIN {private_messages} AS messages ' .
+@@ -254,8 +254,8 @@ class PrivateMessageMapper implements PrivateMessageMapperInterface {
+       'ON message.id = thread_message.private_messages_target_id ' .
+       'JOIN {private_message_threads} AS thread ' .
+       'ON thread_message.entity_id = thread.id ' .
+-      'JOIN {private_message_thread__members} AS member ' .
+-      'ON member.entity_id = thread.id AND member.members_target_id = :uid ' .
++      'JOIN {private_message_thread__members} AS thread_member ' .
++      'ON thread_member.entity_id = thread.id AND thread_member.members_target_id = :uid ' .
+       'JOIN {private_message_thread__last_access_time} AS last_access ' .
+       'ON last_access.entity_id = thread.id ' .
+       'JOIN {pm_thread_access_time} as access_time ' .
