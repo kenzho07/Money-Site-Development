@@ -3,10 +3,9 @@ description: 'Builds scaffolding for custom modules.'
 package: Development
 configure: module_builder.settings
 type: module
-# core: 8.x
+core: 8.x
 
-# Information added by Drupal.org packaging script on 2019-06-17
-version: '8.x-3.2'
-core: '8.x'
+# Information added by Drupal.org packaging script on 2019-10-07
+version: '8.x-3.3'
 project: 'module_builder'
-datestamp: 1560773894
+datestamp: 1570474108

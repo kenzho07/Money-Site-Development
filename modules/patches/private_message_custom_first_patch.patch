@@ -1,0 +1,216 @@
+diff --git a/modules/contrib/private_message/js/private_message_members_widget.js b/modules/contrib/private_message/js/private_message_members_widget.js
+index 6b5b4bb7..a97371cc 100644
+--- a/modules/contrib/private_message/js/private_message_members_widget.js
++++ b/modules/contrib/private_message/js/private_message_members_widget.js
+@@ -196,8 +196,12 @@
+       i = 1;
+       $.each(autocompleteUsernames[string], function (uid) {
+         var username = autocompleteUsernames[string][uid].username;
++        var firstname = autocompleteUsernames[string][uid].firstname;
++        var lastname = autocompleteUsernames[string][uid].lastname;
++        
++        var fullDisplayName = username + " - " + firstname + " " + lastname;
+         if (!insertedUsernames[username]) {
+-          $("<li/>", {class:"ui-menu-item"}).append($("<a/>", {class:"pm-autocomplete-search-result", "data-username":username, tabindex:i}).text(username)).appendTo(list);
++          $("<li/>", {class:"ui-menu-item"}).append($("<a/>", {class:"pm-autocomplete-search-result", "data-username":username, tabindex:i}).text(fullDisplayName)).appendTo(list);
+           i += 1;
+         }
+       });
+@@ -500,7 +504,7 @@
+         ajax = ajax;
+ 
+         autocompleteUsernames[response.string] = response.userInfo;
+-
++        
+         showAutocompleteResults(response.string);
+       };
+ 
+diff --git a/modules/contrib/private_message/private_message.routing.yml b/modules/contrib/private_message/private_message.routing.yml
+index b65098f2..113ec5ab 100644
+--- a/modules/contrib/private_message/private_message.routing.yml
++++ b/modules/contrib/private_message/private_message.routing.yml
+@@ -1,5 +1,5 @@
+ private_message.private_message_page:
+-  path: '/private_messages'
++  path: '/admin/private_messages'
+   defaults:
+     _controller: '\Drupal\private_message\Controller\PrivateMessageController::privateMessagePage'
+     _title: 'Private Messages'
+@@ -8,7 +8,7 @@ private_message.private_message_page:
+     _user_is_logged_in: 'TRUE'
+ 
+ entity.private_message_thread.canonical:
+-  path: '/private_messages/{private_message_thread}'
++  path: '/admin/private_messages/{private_message_thread}'
+   defaults:
+     _entity_view: 'private_message_thread'
+     _title: 'Private Messages'
+@@ -16,7 +16,7 @@ entity.private_message_thread.canonical:
+     _entity_access: 'private_message_thread.view'
+ 
+ entity.private_message_thread.delete_form:
+-  path: '/private_messages/{private_message_thread}/delete'
++  path: '/admin/private_messages/{private_message_thread}/delete'
+   defaults:
+     _entity_form: private_message_thread.delete
+     _title: 'Delete Thread'
+@@ -24,7 +24,7 @@ entity.private_message_thread.delete_form:
+     _entity_access: 'private_message_thread.delete'
+ 
+ private_message.private_message_create:
+-  path: '/private_message/create'
++  path: '/admin/private_message/create'
+   defaults:
+   # Calls the form.add controller, defined in the contact entity.
+     _entity_form: private_message.add
+@@ -33,7 +33,7 @@ private_message.private_message_create:
+     _entity_create_access: 'private_message'
+ 
+ entity.private_message.canonical:
+-  path: '/private_message/{private_message}'
++  path: '/admin/private_message/{private_message}'
+   defaults:
+   # Calls the view controller, defined in the annotation of the contact entity
+     _entity_view: 'private_message'
+@@ -105,3 +105,11 @@ private_message.ajax_callback:
+   requirements:
+     _csrf_token: 'TRUE'
+     _user_is_logged_in: 'TRUE'
++
++
++
++private_message.private_message_page_from_admin_page:
++  path: '/admin/private_message'
++  requirements:
++    _permission: 'use private messaging system'
++    _user_is_logged_in: 'TRUE'
+diff --git a/modules/contrib/private_message/src/Form/PrivateMessageThreadDeleteForm.php b/modules/contrib/private_message/src/Form/PrivateMessageThreadDeleteForm.php
+index 078f6307..92bab1a8 100644
+--- a/modules/contrib/private_message/src/Form/PrivateMessageThreadDeleteForm.php
++++ b/modules/contrib/private_message/src/Form/PrivateMessageThreadDeleteForm.php
+@@ -48,7 +48,7 @@ public function submitForm(array &$form, FormStateInterface $form_state) {
+     $user = User::load($this->currentUser()->id());
+     $this->getEntity()->delete($user);
+ 
+-    $form_state->setRedirect('private_message.private_message_page');
++    $form_state->setRedirect('private_message.private_message_page_from_admin_page');
+   }
+ 
+ }
+diff --git a/modules/contrib/private_message/src/Mapper/PrivateMessageMapper.php b/modules/contrib/private_message/src/Mapper/PrivateMessageMapper.php
+index bc36827a..cfd29dd9 100644
+--- a/modules/contrib/private_message/src/Mapper/PrivateMessageMapper.php
++++ b/modules/contrib/private_message/src/Mapper/PrivateMessageMapper.php
+@@ -63,7 +63,7 @@ public function getThreadIdForMembers(array $members) {
+ 
+     // Next, do a left join for all rows that don't contain the users, and
+     // ensure that there aren't any additional users in selected threads.
+-    $alias = $query->leftJoin('private_message_thread__members', 'member', 'member.entity_id = pm.id AND member.members_target_id NOT IN (:uids[])', [':uids[]' => $uids]);
++    $alias = $query->leftJoin('private_message_thread__members', 'thread_member', 'thread_member.entity_id = pm.id AND thread_member.members_target_id NOT IN (:uids[])', [':uids[]' => $uids]);
+     $query->isNull($alias . '.members_target_id');
+ 
+     return $query->execute()->fetchField();
+@@ -75,8 +75,8 @@ public function getThreadIdForMembers(array $members) {
+   public function getFirstThreadIdForUser(UserInterface $user) {
+     return $this->database->queryRange('SELECT thread.id ' .
+       'FROM {private_message_threads} AS thread ' .
+-      'JOIN {private_message_thread__members} AS member ' .
+-      'ON member.entity_id = thread.id AND member.members_target_id = :uid ' .
++      'JOIN {private_message_thread__members} AS thread_member ' .
++      'ON thread_member.entity_id = thread.id AND thread_member.members_target_id = :uid ' .
+       'JOIN {private_message_thread__private_messages} AS thread_messages ' .
+       'ON thread_messages.entity_id = thread.id ' .
+       'JOIN {private_messages} AS messages ' .
+@@ -99,8 +99,8 @@ public function getFirstThreadIdForUser(UserInterface $user) {
+   public function getThreadIdsForUser(UserInterface $user, $count, $timestamp = FALSE) {
+     $query = 'SELECT DISTINCT(thread.id), MAX(thread.updated) ' .
+       'FROM {private_message_threads} AS thread ' .
+-      'JOIN {private_message_thread__members} AS member ' .
+-      'ON member.entity_id = thread.id AND member.members_target_id = :uid ' .
++      'JOIN {private_message_thread__members} AS thread_member ' .
++      'ON thread_member.entity_id = thread.id AND thread_member.members_target_id = :uid ' .
+       'JOIN {private_message_thread__private_messages} AS thread_messages ' .
+       'ON thread_messages.entity_id = thread.id ' .
+       'JOIN {private_messages} AS messages ' .
+@@ -134,8 +134,8 @@ public function getThreadIdsForUser(UserInterface $user, $count, $timestamp = FA
+   public function checkForNextThread(UserInterface $user, $timestamp) {
+     $query = 'SELECT DISTINCT(thread.id) ' .
+       'FROM {private_message_threads} AS thread ' .
+-      'JOIN {private_message_thread__members} AS member ' .
+-      'ON member.entity_id = thread.id AND member.members_target_id = :uid ' .
++      'JOIN {private_message_thread__members} AS thread_member ' .
++      'ON thread_member.entity_id = thread.id AND thread_member.members_target_id = :uid ' .
+       'JOIN {private_message_thread__private_messages} AS thread_messages ' .
+       'ON thread_messages.entity_id = thread.id ' .
+       'JOIN {private_messages} AS messages ' .
+@@ -166,10 +166,15 @@ public function getUserIdsFromString($string, $count) {
+       $query = 'SELECT user_data.uid FROM {users_field_data} AS user_data LEFT ' .
+         'JOIN {user__roles} AS user_roles ' .
+         'ON user_roles.entity_id = user_data.uid ' .
++        'LEFT JOIN {user__field_fir} AS user_firstname ' .
++        'ON user_firstname.entity_id = user_data.uid ' .
++        'LEFT JOIN {user__field_last_name} AS user_lastname ' .
++        'ON user_lastname.entity_id = user_data.uid ' .
+         'LEFT JOIN {config} AS role_config ' .
+         "ON role_config.name = CONCAT('user.role.', user_roles.roles_target_id) " .
+         'JOIN {config} AS config ON config.name = :authenticated_config WHERE ' .
+-        'user_data.name LIKE :string AND user_data.name != :current_user AND ' .
++        '(user_data.name LIKE :string OR user_firstname.field_fir_value LIKE :string OR user_lastname.field_last_name_value LIKE :string ) AND ' . 
++        'user_data.name != :current_user AND ' .
+         '(config.data LIKE :use_pm_permission ' .
+         'OR role_config.data LIKE :use_pm_permission) ' .
+         'ORDER BY user_data.name ASC';
+@@ -198,8 +203,8 @@ public function getUserIdsFromString($string, $count) {
+   public function getUpdatedInboxThreadIds(array $existingThreadIds, $count = FALSE) {
+     $query = 'SELECT DISTINCT(thread.id), updated ' .
+       'FROM {private_message_threads} AS thread ' .
+-      'JOIN {private_message_thread__members} AS member ' .
+-      'ON member.entity_id = thread.id AND member.members_target_id = :uid ' .
++      'JOIN {private_message_thread__members} AS thread_member ' .
++      'ON thread_member.entity_id = thread.id AND thread_member.members_target_id = :uid ' .
+       'JOIN {private_message_thread__private_messages} AS thread_messages ' .
+       'ON thread_messages.entity_id = thread.id ' .
+       'JOIN {private_messages} AS messages ' .
+@@ -246,17 +251,24 @@ public function checkPrivateMessageMemberExists($username) {
+   }
+ 
+   /**
+-   * {@inheritdoc}
++   * {@inheritdoc} edit by ziting
+    */
+   public function getUnreadThreadCount($uid, $lastCheckTimestamp) {
++    
+     return $this->database->query(
+       'SELECT COUNT(thread.id) FROM {private_message_threads} AS thread JOIN ' .
+-      '{private_message_thread__members} AS member ' .
+-      'ON member.entity_id = thread.id AND member.members_target_id = :uid ' .
+-      'WHERE thread.updated > :timestamp',
++      '{private_message_thread__members} AS thread_member ' .
++      'ON thread_member.entity_id = thread.id AND thread_member.members_target_id = :uid ' .
++
++      'JOIN {private_message_thread__last_access}_time AS last_access ' .
++      'ON last_access.entity_id = thread.id ' .
++      'JOIN {pm_thread_access_time} as access_time ' .
++      'ON access_time.id = last_access.last_access_time_target_id AND access_time.owner = :uid AND access_time.access_time < thread.updated',
++
++      //'WHERE thread.updated > :timestamp',
+       [
+         ':uid' => $uid,
+-        ':timestamp' => $lastCheckTimestamp,
++        //':timestamp' => $lastCheckTimestamp,
+       ]
+     )->fetchField();
+   }
+diff --git a/modules/contrib/private_message/src/Plugin/Block/PrivateMessageInboxBlock.php b/modules/contrib/private_message/src/Plugin/Block/PrivateMessageInboxBlock.php
+index 196376fc..47fed212 100644
+--- a/modules/contrib/private_message/src/Plugin/Block/PrivateMessageInboxBlock.php
++++ b/modules/contrib/private_message/src/Plugin/Block/PrivateMessageInboxBlock.php
+@@ -181,7 +181,7 @@ public function getCacheContexts() {
+    */
+   public function defaultConfiguration() {
+     return [
+-      'thread_count' => 5,
++      'thread_count' => 10,
+       'ajax_load_count' => 5,
+       'ajax_refresh_rate' => 15,
+     ];

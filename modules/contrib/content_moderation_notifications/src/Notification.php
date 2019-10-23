@@ -9,6 +9,7 @@ use Drupal\Core\Mail\MailManagerInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\token\TokenEntityMapperInterface;
 use Drupal\user\EntityOwnerInterface;
+use Drupal\user\RoleInterface;
 
 /**
  * General service for moderation-related questions about Entity API.
@@ -131,10 +132,20 @@ class Notification implements NotificationInterface {
 
       // Roles.
       foreach ($notification->getRoleIds() as $role) {
-        /** @var \Drupal\user\UserInterface[] $role_users */
-        $role_users = $this->entityTypeManager
-          ->getStorage('user')
-          ->loadByProperties(['roles' => $role]);
+        /** @var \Drupal\Core\Entity\EntityStorageInterface $user_storage */
+        $user_storage = $this->entityTypeManager->getStorage('user');
+        if ($role === RoleInterface::AUTHENTICATED_ID) {
+          $uids = \Drupal::entityQuery('user')
+            ->condition('status', 1)
+            ->accessCheck(FALSE)
+            ->execute();
+          /** @var \Drupal\user\UserInterface[] $role_users */
+          $role_users = $user_storage->loadMultiple(array_filter($uids));
+        }
+        else {
+          /** @var \Drupal\user\UserInterface[] $role_users */
+          $role_users = $user_storage->loadByProperties(['roles' => $role]);
+        }
         foreach ($role_users as $role_user) {
           $data['to'][] = $role_user->getEmail();
         }

@@ -1,0 +1,14 @@
+uuid: 43dacb0c-af09-45ce-93da-1f30835a5aef
+langcode: en
+status: true
+dependencies:
+  config:
+    - domain.record.tourist_dev_ops_xyz
+  module:
+    - domain_access
+id: domain_access_add_action.tourist_dev_ops_xyz
+label: 'Add selected content to the CMS Portal - Tourist Dev Sites domain'
+type: node
+plugin: domain_access_add_action
+configuration:
+  domain_id: tourist_dev_ops_xyz

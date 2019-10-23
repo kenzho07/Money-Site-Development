@@ -1,0 +1,21 @@
+uuid: d56ba856-36f4-4015-9a98-317fa1f77a36
+langcode: en
+status: true
+dependencies:
+  config:
+    - taxonomy.vocabulary.robots_categories
+  module:
+    - text
+id: taxonomy_term.robots_categories.default
+targetEntityType: taxonomy_term
+bundle: robots_categories
+mode: default
+content:
+  description:
+    label: hidden
+    type: text_default
+    weight: 0
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+hidden: {  }

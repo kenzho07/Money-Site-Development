@@ -1,0 +1,4 @@
+ms_domain_vocab.admin:
+  title: Domain vocab 
+  route_name: ms_domain_vocab.settings
+  base_route: domain.admin

@@ -1,0 +1,7 @@
+ms_csv_importer.form:
+  path: '/admin/config/moneysite/csv-importer'
+  defaults:
+    _form: '\Drupal\ms_csv_importer\Form\ImporterForm'
+    _title: 'Import CSV'
+  requirements:
+    _permission: 'administer site configuration'

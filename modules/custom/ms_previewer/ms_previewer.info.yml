@@ -1,0 +1,5 @@
+name: Money Site Previewer
+description: Allows previewing of a theme by linked domain.
+package: Money Site
+type: module
+core: 8.x

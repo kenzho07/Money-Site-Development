@@ -85,8 +85,14 @@ class ModuleHooksForm extends ComponentFormBase {
         $description = $hook_info_single['description'];
 
         if ($hook_info_single['core']) {
+          // Get MAJOR, MINOR and PATCH components from the current version string.
+          $core_version_parts = explode('.', \Drupal::VERSION);
+          // Change the PATCH part to be just 'x'.
+          $core_version_parts[2] = 'x';
+          // Build MAJOR.MINOR.x version string.
+          $core_version_minor = implode('.', $core_version_parts);
           // External Uri.
-          $url = Url::fromUri('https://api.drupal.org/api/function/' . $hook . '/8');
+          $url = Url::fromUri('https://api.drupal.org/api/function/' . $hook . '/' . $core_version_minor);
           $description .= ' ' . \Drupal::l(t('[documentation]'), $url);
         }
 

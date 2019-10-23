@@ -1,0 +1,6 @@
+services:
+  theme.negotiator.ms_previewer:
+    class: Drupal\ms_previewer\Theme\Previewer
+    arguments: ['@current_user','@config.factory']
+    tags:
+      - { name: theme_negotiator, priority: 20 }

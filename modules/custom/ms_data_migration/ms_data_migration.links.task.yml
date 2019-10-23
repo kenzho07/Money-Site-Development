@@ -1,0 +1,4 @@
+ms_data_migration.admin:
+  title: 'REST API Config'
+  route_name: ms_data_migration.admin
+  base_route: ms_data_migration.admin

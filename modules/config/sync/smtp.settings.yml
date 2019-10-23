@@ -1,0 +1,13 @@
+smtp_password: SChWyKYXoY
+smtp_on: true
+smtp_host: mail.dev-ops.xyz
+smtp_hostbackup: ''
+smtp_port: '25'
+smtp_protocol: standard
+smtp_username: no-reply-cms@dev-ops.xyz
+smtp_from: no-reply-cms@dev-ops.xyz
+smtp_fromname: Admin
+smtp_client_hostname: ''
+smtp_client_helo: ''
+smtp_allowhtml: '1'
+smtp_debugging: false

@@ -1,0 +1,7 @@
+ms_link_stats.content:
+  path: '/node/{node}/ms_link_stats'
+  defaults:
+    _controller: '\Drupal\ms_link_stats\Controller\LinkStatsController::stats'
+    _title: 'Link Statistics'
+  requirements:
+    _permission: 'access content'

@@ -1,0 +1,8 @@
+services:
+  ms_redirect_403_to_404_exception_listener:
+    class: Drupal\ms_redirect_403_to_404\EventSubscriber\RedirectOn403Subscriber
+    arguments:
+      - '@router.admin_context'
+      - '@current_user'
+    tags:
+      - { name: event_subscriber }

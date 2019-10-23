@@ -1,0 +1,5 @@
+name: Custom URL Alias
+type: module
+description : change Site Post URL Alias based on the domain.
+core: 8.x
+package: Money Site

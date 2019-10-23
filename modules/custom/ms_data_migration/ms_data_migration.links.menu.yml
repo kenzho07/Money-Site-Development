@@ -1,0 +1,12 @@
+ms_data_migration.admin:
+  title: Money Site Config.
+  route_name: ms_data_migration.admin
+  parent: system.admin_config
+  description: 'Money Site Custom Configuration.'
+  weight: 0
+ms_data_migration.admin_list:
+  title: REST API Config
+  route_name: ms_data_migration.admin
+  parent: ms_data_migration.admin
+  description: 'Manage Money Site custom configuration for REST API.'
+  weight: -10

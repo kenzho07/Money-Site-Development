@@ -1,0 +1,7 @@
+ms_domain_vocab.settings:
+  path: '/admin/config/domain/ms_domain_vocab/config'
+  defaults:
+    _form: '\Drupal\ms_domain_vocab\Form\MsDomainVocabConfigForm'
+    _title: 'Domain vocabulary configuration'
+  requirements:
+    _permission: 'administer domains'

@@ -1,0 +1,22 @@
+uuid: df792f26-8b60-484d-b8e6-65850240c2e2
+langcode: en
+status: true
+dependencies:
+  module:
+    - node
+id: site_posts_uri
+label: 'Site Posts URI'
+type: 'canonical_entities:node'
+pattern: '[node:field_touristsecrets_com_primary:entity:parents:join-path]/[node:field_touristsecrets_com_primary:entity:name]/[node:title]'
+selection_criteria:
+  b487a22b-3d3d-4e9c-a923-d55195a96396:
+    id: node_type
+    bundles:
+      site_posts: site_posts
+    negate: false
+    context_mapping:
+      node: node
+    uuid: b487a22b-3d3d-4e9c-a923-d55195a96396
+selection_logic: and
+weight: -5
+relationships: {  }

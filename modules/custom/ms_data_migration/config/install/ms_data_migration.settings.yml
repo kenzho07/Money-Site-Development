@@ -1,0 +1,21 @@
+default:
+  default_run_interval: '302'
+  default_default_uid: '89'
+  default_posts_url: '/?rest_route=/moneysite-plugins/v1/moneysite/post/get'
+  default_update_url: '/?rest_route=/moneysite-plugins/v1/moneysite/post/update'
+  default_create_url: '/?rest_route=/moneysite-plugins/v1/moneysite/post/create'
+  default_category_url: '/?rest_route=/moneysite-plugins/v1/moneysite/taxonomy'
+  subsites:
+    bundle: 'touristsecrets_com'
+    field_mappings:
+      post_content: 'content'
+      post_name: 'name'
+      post_title: 'title'
+      post_status: 'status'
+      guid: 'url'
+      vid: 'ID'
+      meta: 'meta'
+    category_mappings:
+      term_id: 'tid'
+      name: 'name'
+      parent: 'parent'

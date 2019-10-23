@@ -1,0 +1,44 @@
+<?php
+/*
+ * Hook_form_alter().
+ */
+function ms_link_stats_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id) {
+  $current_path = \Drupal::service('path.current')->getPath();
+  $explode_curr_path = explode('/', $current_path);
+
+  // Check node edit form and then attach library.
+  if ($explode_curr_path[1] == 'node' && $explode_curr_path[3] == 'edit') {
+    $nid = $explode_curr_path[2];
+    $node = \Drupal::entityTypeManager()->getStorage('node')->load($nid);
+    if ($node->gettype() == 'site_posts') {
+      // Add library.
+      $form['#attached']['library'][] = 'ms_link_stats/custom';
+    }
+  }
+}
+
+/*
+ * Hook entity type presave.
+ */
+function ms_link_stats_node_presave(Drupal\node\NodeInterface $node) {
+  //check node has body
+  if ($node && $node->hasField('body')) {
+    $body_data = $node->get('body')->getValue();
+    if ($body_data) {
+      //check each body and replace if bg color
+      foreach ($body_data as $key => &$value) {
+        if (isset($value['value']) && $value['value']) {
+          $value['value'] = str_replace("background-color: rgb(255, 255, 0);", "", $value['value']);
+        }
+        if (isset($value['summary']) && $value['summary']) {
+          $value['summary'] = str_replace("background-color: rgb(255, 255, 0);", "", $value['summary']);
+        }
+
+      }
+    }
+
+    //replace node body without bg color
+    $node->body = $body_data;
+  }
+
+}

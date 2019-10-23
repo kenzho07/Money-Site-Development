@@ -1,0 +1,14 @@
+uuid: 92ecc613-962d-49b2-8287-ba8b38d22c46
+langcode: en
+status: true
+dependencies:
+  config:
+    - domain.record.tourist_dev_ops_xyz
+  module:
+    - domain_access
+id: domain_access_add_editor_action.tourist_dev_ops_xyz
+label: 'Add editors to the CMS Portal - Tourist Dev Sites domain'
+type: user
+plugin: domain_access_add_editor_action
+configuration:
+  domain_id: tourist_dev_ops_xyz

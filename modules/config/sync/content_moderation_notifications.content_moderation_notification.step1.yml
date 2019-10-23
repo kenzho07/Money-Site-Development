@@ -1,0 +1,19 @@
+uuid: ed6b2566-e88d-49a2-b792-d638d975750b
+langcode: en
+status: true
+dependencies: {  }
+id: step1
+workflow: editorial
+transitions:
+  submit_draft_for_review: submit_draft_for_review
+roles:
+  administrator: administrator
+  team_leader: team_leader
+  editor: editor
+author: true
+emails: ''
+subject: 'CMS Portal - Submitted content for review'
+body:
+  value: "<p>Hi,</p>\r\n\r\n<p>New Content title \"[contenttitle]\" has been Created and Submitted for review. Please log in&nbsp;to the portal for review.&nbsp;</p>\r\n\r\n<p>[viewurl]</p>\r\n\r\n<p>- CMS Portal</p>\r\n"
+  format: full_html
+label: 'Submit Draft for Review'

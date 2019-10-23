@@ -6,7 +6,6 @@ use Drupal\Component\Render\PlainTextOutput;
 use Drupal\Core\Test\AssertMailTrait;
 use Drupal\entity_test\Entity\EntityTestRev;
 use Drupal\KernelTests\KernelTestBase;
-use Drupal\workflows\Entity\Workflow;
 
 /**
  * Test sending of notifications for moderation state changes.
@@ -17,6 +16,7 @@ class NotificationsTest extends KernelTestBase {
 
   use AssertMailTrait;
   use ContentModerationNotificationCreateTrait;
+  use ContentModerationNotificationTestTrait;
 
   /**
    * {@inheritdoc}
@@ -48,10 +48,7 @@ class NotificationsTest extends KernelTestBase {
     $this->config('system.site')->set('mail', 'admin@example.com')->save();
 
     // Attach workflow to entity test.
-    /** @var \Drupal\workflows\WorkflowInterface $workflow */
-    $workflow = Workflow::load('editorial');
-    $workflow->getTypePlugin()->addEntityTypeAndBundle('entity_test_rev', 'entity_test_rev');
-    $workflow->save();
+    $this->enableModeration();
   }
 
   /**

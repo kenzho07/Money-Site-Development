@@ -1,0 +1,7 @@
+services:
+  plugin.manager.importer:
+    class: Drupal\ms_csv_importer\Plugin\ImporterManager
+    parent: default_plugin_manager
+  ms_csv_importer.parser:
+    class: Drupal\ms_csv_importer\Parser
+    arguments: ['@entity_type.manager']

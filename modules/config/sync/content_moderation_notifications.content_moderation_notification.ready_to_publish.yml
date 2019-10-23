@@ -1,0 +1,19 @@
+uuid: 272537d4-1196-441a-826b-d95f78dadf1f
+langcode: en
+status: true
+dependencies: {  }
+id: ready_to_publish
+workflow: editorial
+transitions:
+  ready_to_publish: ready_to_publish
+roles:
+  administrator: administrator
+  team_leader: team_leader
+  editor: editor
+author: true
+emails: ''
+subject: 'CMS Portal - Content are Ready to be Publish'
+body:
+  value: "<p>Hi,</p>\r\n\r\n<p>The content of \"[contenttitle]\" has been set from 'Draft' to 'Ready to be Publish' by [current-user:display-name].</p>\r\n\r\n<p>Please see this link to check: [viewurl]</p>\r\n\r\n<p>- CMS Portal</p>\r\n\r\n<p>&nbsp;</p>\r\n"
+  format: full_html
+label: 'Ready To Publish'

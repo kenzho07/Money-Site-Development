@@ -1,0 +1,29 @@
+uuid: 2d3a7002-f2f8-43cd-a929-d165583865db
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_robots_categories_primary
+    - node.type.site_posts
+    - taxonomy.vocabulary.robots_categories
+id: node.site_posts.field_robots_categories_primary
+field_name: field_robots_categories_primary
+entity_type: node
+bundle: site_posts
+label: 'robots_categories primary'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:taxonomy_term'
+  handler_settings:
+    target_bundles:
+      robots_categories: robots_categories
+    sort:
+      field: name
+      direction: asc
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference

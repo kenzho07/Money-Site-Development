@@ -1,0 +1,14 @@
+uuid: 421a3959-9739-46e3-8b41-9b9a563488d7
+langcode: en
+status: true
+dependencies:
+  config:
+    - domain.record.tourist_dev_ops_xyz
+  module:
+    - domain_access
+id: domain_access_remove_action.tourist_dev_ops_xyz
+label: 'Remove selected content from the CMS Portal - Tourist Dev Sites domain'
+type: node
+plugin: domain_access_remove_action
+configuration:
+  domain_id: tourist_dev_ops_xyz

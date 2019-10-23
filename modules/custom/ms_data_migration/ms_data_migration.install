@@ -1,0 +1,106 @@
+<?php
+use Drupal\Core\Database\Database;
+
+/**
+ * To define schema for customt table for mapping of drupal users with wordpress users according to domain site
+ */
+function ms_data_migration_schema() {
+    
+  $schema['ms_site_drupal_wp_users'] = [
+    'fields' => [
+        'uid' => [
+            'type' => 'int',
+            'not null' => TRUE,
+            'length' => 10,
+            'description' => "drupal users.uid",
+        ],
+        'site'=>[
+            'type' => 'varchar',
+            'length' => 128,
+            'not null' => TRUE,
+            'description' => "domain sites",
+            ],
+        'wp_uid'=>[
+            'type' => 'int',
+            'not null' => TRUE,
+            'length' => 10,
+            'description' => "wp users.uid",
+        ],
+        'created' => [
+            'type' => 'varchar',
+            'mysql_type' => 'datetime',
+            'not null' => TRUE,
+            'description' => 'created date time(yyyy-mm-dd H:i:s).',            
+        ],
+        'status' => [
+            'type' => 'int',
+            'mysql_type' => 'tinyint',
+            'length' => 1,
+            'not null' => TRUE,
+            'default' => 1,
+            'description' => 'relationship status(1 => Active, 0 => Inactive).',
+        ],
+    ],
+    'primary key' => ['uid', 'site', 'wp_uid'],
+    'indexes' => [
+      'uid' => ['uid'],
+      'site' => ['site'],
+      'wp_uid' => ['wp_uid'],
+    ],
+];
+  return $schema;
+}
+
+/**
+ * Create new database table by update hook {custom_table}.
+ */
+function ms_data_migration_update_8001() {
+
+    $schema = Database::getConnection()->schema();
+    $schema_details = [
+        'fields' => [
+            'uid' => [
+                'type' => 'int',
+                'not null' => TRUE,
+                'length' => 10,
+                'description' => "drupal users.uid",
+            ],
+            'site'=>[
+                'type' => 'varchar',
+                'length' => 128,
+                'not null' => TRUE,
+                'description' => "domain sites",
+                ],
+            'wp_uid'=>[
+                'type' => 'int',
+                'not null' => TRUE,
+                'length' => 10,
+                'description' => "wp users.uid",
+            ],
+            'created' => [
+                'type' => 'varchar',
+                'mysql_type' => 'datetime',
+                'not null' => TRUE,
+                'description' => 'created date time(yyyy-mm-dd H:i:s).',            
+            ],
+            'status' => [
+                'type' => 'int',
+                'mysql_type' => 'tinyint',
+                'length' => 1,
+                'not null' => TRUE,
+                'default' => 1,
+                'description' => 'relationship status(1 => Active, 0 => Inactive).',
+            ],
+        ],
+        'primary key' => ['uid', 'site', 'wp_uid'],
+        'indexes' => [
+            'uid' => ['uid'],
+            'site' => ['site'],
+            'wp_uid' => ['wp_uid'],
+        ],
+    ];
+    $table_name = 'ms_site_drupal_wp_users';
+    $table_schema = $schema_details;
+    $schema->createTable($table_name, $table_schema);
+  
+  }

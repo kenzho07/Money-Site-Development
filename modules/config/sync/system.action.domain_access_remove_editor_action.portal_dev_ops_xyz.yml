@@ -1,0 +1,14 @@
+uuid: 14616cd3-c0dc-4140-b79f-c885709e05a9
+langcode: en
+status: true
+dependencies:
+  config:
+    - domain.record.portal_dev_ops_xyz
+  module:
+    - domain_access
+id: domain_access_remove_editor_action.portal_dev_ops_xyz
+label: 'Remove editors from the CMS Portal - Money Dev Sites domain'
+type: user
+plugin: domain_access_remove_editor_action
+configuration:
+  domain_id: portal_dev_ops_xyz

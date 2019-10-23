@@ -1,0 +1,167 @@
+uuid: 22758e2d-d2c1-4046-a2cd-9e0adf0cb23e
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.site_posts.body
+    - field.field.node.site_posts.field_domain_access
+    - field.field.node.site_posts.field_domain_all_affiliates
+    - field.field.node.site_posts.field_domain_source
+    - field.field.node.site_posts.field_featured_image
+    - field.field.node.site_posts.field_meta_tags
+    - field.field.node.site_posts.field_related_articles_new
+    - field.field.node.site_posts.field_related_content
+    - field.field.node.site_posts.field_robots_categories
+    - field.field.node.site_posts.field_robots_categories_primary
+    - field.field.node.site_posts.field_tag
+    - field.field.node.site_posts.field_touristsecrets_com
+    - field.field.node.site_posts.field_touristsecrets_com_primary
+    - field.field.node.site_posts.field_wp_content_id
+    - field.field.node.site_posts.panelizer
+    - node.type.site_posts
+  module:
+    - image
+    - metatag
+    - panelizer
+    - text
+    - user
+third_party_settings:
+  panelizer:
+    enable: true
+    custom: true
+    allow: true
+    default: default
+    displays:
+      default:
+        blocks:
+          690fa017-6392-4c6f-9317-29e3168171c8:
+            id: 'entity_field:node:body'
+            label: Body
+            provider: ctools_block
+            label_display: '0'
+            formatter:
+              label: hidden
+              type: text_default
+              settings: {  }
+              third_party_settings: {  }
+              weight: 0
+              region: content
+            region: content
+            weight: 101
+            context_mapping:
+              entity: '@panelizer.entity_context:entity'
+            uuid: 690fa017-6392-4c6f-9317-29e3168171c8
+        id: panels_variant
+        label: Default
+        uuid: 8e4c2d9f-c106-461d-99fc-46bd95253dcc
+        weight: 0
+        layout: layout_onecol
+        layout_settings: {  }
+        page_title: null
+        storage_type: panelizer_default
+        storage_id: 'node:site_posts:default:default'
+        builder: ipe
+        pattern: panelizer
+        static_context: {  }
+id: node.site_posts.default
+targetEntityType: node
+bundle: site_posts
+mode: default
+content:
+  body:
+    label: hidden
+    type: text_default
+    weight: 101
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+  content_moderation_control:
+    weight: -20
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_featured_image:
+    weight: 104
+    label: above
+    settings:
+      image_style: ''
+      image_link: ''
+    third_party_settings: {  }
+    type: image
+    region: content
+  field_meta_tags:
+    weight: 102
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    type: metatag_empty_formatter
+    region: content
+  field_related_articles_new:
+    weight: 115
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    type: entity_reference_label
+    region: content
+  field_robots_categories:
+    weight: 110
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    type: entity_reference_label
+    region: content
+  field_robots_categories_primary:
+    weight: 112
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    type: entity_reference_label
+    region: content
+  field_tag:
+    weight: 107
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    type: entity_reference_label
+    region: content
+  field_touristsecrets_com:
+    weight: 111
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    type: entity_reference_label
+    region: content
+  field_touristsecrets_com_primary:
+    weight: 113
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    type: entity_reference_label
+    region: content
+  field_wp_content_id:
+    weight: 114
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    type: string
+    region: content
+  links:
+    weight: 100
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+hidden:
+  addtoany: true
+  field_domain_access: true
+  field_domain_all_affiliates: true
+  field_domain_source: true
+  field_related_content: true
+  panelizer: true
+  private_message_link: true

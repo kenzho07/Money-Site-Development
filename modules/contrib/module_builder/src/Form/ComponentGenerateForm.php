@@ -5,6 +5,7 @@ namespace Drupal\module_builder\Form;
 use Drupal\Core\Entity\EntityForm;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Messenger\MessengerTrait;
 use Drupal\Core\Render\Element;
 use Drupal\module_builder\ExceptionHandler;
 use DrupalCodeBuilder\Exception\SanityException;
@@ -16,6 +17,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * Form showing generated component code.
  */
 class ComponentGenerateForm extends EntityForm {
+
+  use MessengerTrait;
 
   /**
    * The DCB Generate Task handler.
@@ -84,6 +87,11 @@ class ComponentGenerateForm extends EntityForm {
 
     // Get the path to the module if it's previously been written.
     $existing_module_path = $this->getExistingModule();
+    if ($existing_module_path) {
+      $this->messenger()->addWarning(t("This module already exists at @path. It is recommended you use version control to prevent losing any existing code.", [
+        '@path' => $existing_module_path,
+      ]));
+    }
 
     $module_name = $this->entity->id();
     if (\Drupal::moduleHandler()->moduleExists($module_name)) {
@@ -108,8 +116,30 @@ class ComponentGenerateForm extends EntityForm {
       $title = t('@filename code', [
         '@filename' => $filename,
       ]);
-      if (file_exists($existing_module_path . '/' . $filename)) {
+
+      // Warn the user if the file already exists, and is not committed to git.
+      $filepath = $existing_module_path . '/' . $filename;
+      if (file_exists($filepath)) {
+        // TODO: if the file is clean in git, we can maybe skip this, or say
+        // it's ok to overwrite?
         $title .= ' ' . t("(File already exists)");
+
+        $git_status = shell_exec("git status {$filepath} --porcelain");
+
+        if (!empty($git_status)) {
+          $git_status_code = substr($git_status, 0, 2);
+
+          // TODO: These don't take into account that changes might be staged.
+          switch ($git_status_code) {
+            case '??':
+              $title .= ' ' . t("WARNING: file is not under git version control! Writing this will lose the existing version.");
+              break;
+
+            case ' M':
+              $title .= ' ' . t("WARNING: file has uncommitted changes! Writing this will lose these.");
+              break;
+          }
+        }
       }
 
       $form['files'][$filename]['module_code'] = array(
@@ -171,17 +201,11 @@ class ComponentGenerateForm extends EntityForm {
   protected function getExistingModule() {
     $module_name = $this->entity->id();
 
-    if (\Drupal::moduleHandler()->moduleExists($module_name)) {
-      return drupal_get_path('module', $module_name);
-    }
+    $exists = \Drupal::service('extension.list.module')->exists($module_name);
+    if ($exists) {
+      $module = \Drupal::service('extension.list.module')->get($module_name);
 
-    // Account for a module that may have been written, but not yet enabled.
-    if (file_exists('modules/custom/' . $module_name)) {
-      return 'modules/custom/' . $module_name;
-    }
-
-    if (file_exists('modules/' . $module_name)) {
-      return 'modules/' . $module_name;
+      return $module->getPath();
     }
   }
 

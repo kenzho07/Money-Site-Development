@@ -30,39 +30,6 @@ class ComponentTestsPHPUnit8Test extends TestBase {
   ];
 
   /**
-   * Create a test class without a preset.
-   */
-  function testModuleGenerationTestsWithoutPreset() {
-    // Create a module.
-    $module_name = 'test_module';
-    $module_data = array(
-      'base' => 'module',
-      'root_name' => $module_name,
-      'readable_name' => 'Test module',
-      'phpunit_tests' => [
-        0 => [
-          'test_class_name' => 'MyTest',
-        ],
-      ],
-      'readme' => FALSE,
-    );
-
-    $files = $this->generateModuleFiles($module_data);
-
-    $this->assertCount(2, $files, "The expected number of files is returned.");
-
-    $this->assertArrayHasKey("tests/src/MyTest.php", $files, "The files list has a test class file.");
-
-    $test_file = $files["tests/src/MyTest.php"];
-
-    $php_tester = new PHPTester($test_file);
-    $php_tester->assertDrupalCodingStandards($this->phpcsExcludedSniffs);
-    $php_tester->assertHasClass('Drupal\Tests\test_module\MyTest');
-    $php_tester->assertHasMethods(['setUp', 'testMyTest']);
-    $php_tester->assertClassHasPublicProperty('modules', 'array', ['system', 'user', 'test_module']);
-  }
-
-  /**
    * Create a test class with module dependencies.
    */
   function testModuleGenerationTestsWithModuleDependencies() {
@@ -78,6 +45,7 @@ class ComponentTestsPHPUnit8Test extends TestBase {
       ],
       'phpunit_tests' => [
         0 => [
+          'test_type' => 'kernel',
           'test_class_name' => 'MyTest',
         ],
       ],
@@ -88,13 +56,13 @@ class ComponentTestsPHPUnit8Test extends TestBase {
 
     $this->assertCount(2, $files, "The expected number of files is returned.");
 
-    $this->assertArrayHasKey("tests/src/MyTest.php", $files, "The files list has a test class file.");
+    $this->assertArrayHasKey("tests/src/Kernel/MyTest.php", $files, "The files list has a test class file.");
 
-    $test_file = $files["tests/src/MyTest.php"];
+    $test_file = $files["tests/src/Kernel/MyTest.php"];
 
     $php_tester = new PHPTester($test_file);
     $php_tester->assertDrupalCodingStandards($this->phpcsExcludedSniffs);
-    $php_tester->assertHasClass('Drupal\Tests\test_module\MyTest');
+    $php_tester->assertHasClass('Drupal\Tests\test_module\Kernel\MyTest');
     $php_tester->assertHasMethods(['setUp', 'testMyTest']);
     $php_tester->assertClassHasPublicProperty('modules', 'array', [
       'system',
@@ -106,9 +74,44 @@ class ComponentTestsPHPUnit8Test extends TestBase {
   }
 
   /**
-   * Create a test class with a preset.
+   * Create a basic unit test.
    */
-  function testModuleGenerationTestsWithPreset() {
+  function testModuleGenerationUnitTest() {
+    // Create a module.
+    $module_name = 'test_module';
+    $module_data = array(
+      'base' => 'module',
+      'root_name' => $module_name,
+      'readable_name' => 'Generated module',
+      'phpunit_tests' => [
+        0 => [
+          'test_type' => 'unit',
+          'test_class_name' => 'MyTest',
+        ],
+      ],
+      'readme' => FALSE,
+    );
+
+    $files = $this->generateModuleFiles($module_data);
+
+    $this->assertCount(2, $files, "The expected number of files is returned.");
+
+    $this->assertArrayHasKey("tests/src/Unit/MyTest.php", $files, "The files list has a test class file.");
+
+    $test_file = $files["tests/src/Unit/MyTest.php"];
+
+    $php_tester = new PHPTester($test_file);
+    $php_tester->assertDrupalCodingStandards($this->phpcsExcludedSniffs);
+    $php_tester->assertHasClass('Drupal\Tests\test_module\Unit\MyTest');
+    $php_tester->assertClassHasParent('Drupal\Tests\UnitTestCase');
+    $php_tester->assertClassHasNotProperty('modules');
+    $php_tester->assertHasMethods(['setUp', 'testMyTest']);
+  }
+
+  /**
+   * Create a basic kernel test.
+   */
+  function testModuleGenerationKernelTest() {
     // Create a module.
     $module_name = 'test_module';
     $module_data = array(
@@ -136,11 +139,16 @@ class ComponentTestsPHPUnit8Test extends TestBase {
     $php_tester->assertDrupalCodingStandards($this->phpcsExcludedSniffs);
     $php_tester->assertHasClass('Drupal\Tests\test_module\Kernel\MyTest');
     $php_tester->assertClassHasParent('Drupal\KernelTests\KernelTestBase');
+    $php_tester->assertClassHasPublicProperty('modules', 'array', [
+      'system',
+      'user',
+      'test_module',
+    ]);
     $php_tester->assertHasMethods(['setUp', 'testMyTest']);
   }
 
   /**
-   * Create a test class with a preset.
+   * Create a test class with services.
    *
    * @group di
    */
@@ -208,6 +216,7 @@ class ComponentTestsPHPUnit8Test extends TestBase {
       'readable_name' => 'Generated module',
       'phpunit_tests' => [
         0 => [
+          'test_type' => 'kernel',
           'test_class_name' => 'MyTest',
           'test_modules' => [
             0 => [
@@ -238,7 +247,7 @@ class ComponentTestsPHPUnit8Test extends TestBase {
 
     $this->assertArrayHasKey("generated_module.info.yml", $files, "The main module has a .info.yml file.");
     $this->assertArrayHasKey("src/Plugin/Block/Alpha.php", $files, "The main module has a plugin file.");
-    $this->assertArrayHasKey("tests/src/MyTest.php", $files, "The files list has a test class file.");
+    $this->assertArrayHasKey("tests/src/Kernel/MyTest.php", $files, "The files list has a test class file.");
     $this->assertArrayHasKey("tests/modules/test_module/test_module.info.yml", $files, "The test module has a .info.yml file.");
     $this->assertArrayHasKey("tests/modules/test_module/src/Plugin/Block/Alpha.php", $files, "The test module has a plugin file.");
 
@@ -275,10 +284,10 @@ class ComponentTestsPHPUnit8Test extends TestBase {
     $php_tester->assertHasClass('Drupal\test_module\Plugin\Block\Alpha');
     $php_tester->assertClassHasParent('Drupal\Core\Block\BlockBase');
 
-    $test_file = $files["tests/src/MyTest.php"];
+    $test_file = $files["tests/src/Kernel/MyTest.php"];
 
     $php_tester = new PHPTester($test_file);
-    $php_tester->assertHasClass('Drupal\Tests\generated_module\MyTest');
+    $php_tester->assertHasClass('Drupal\Tests\generated_module\Kernel\MyTest');
     $expected_modules_property_value = [
       'system',
       'user',

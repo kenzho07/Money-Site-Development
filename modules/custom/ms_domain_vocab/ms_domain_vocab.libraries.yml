@@ -1,0 +1,4 @@
+ms_domain_vocab.library:
+  version: 1.x
+  js:
+    js/ms-domain-vocab.js: {}

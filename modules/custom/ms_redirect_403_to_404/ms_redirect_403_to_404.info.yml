@@ -1,0 +1,5 @@
+name: Redirect 403 page to 404
+type: module
+description: Redirection of no accessible pages to not found pages
+core: 8.x
+package: 'Money Site'

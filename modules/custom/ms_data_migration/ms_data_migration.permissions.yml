@@ -1,0 +1,4 @@
+access rest api config page:
+  title: Money Site - REST API Config
+  description: Manage API config permissions
+  restrict_access: TRUE

@@ -1,0 +1,19 @@
+<?php
+/**
+ * Implements hook_form_alter().
+ *
+ * Add Title attributes fields in Image modal on CKEditor
+ * @param $form
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ * @param $form_id
+ * @param $node
+ */
+
+function ms_addtitleattribute_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id) {
+  if ($form_id =='editor_image_dialog' || $form_id == 'editor_image_dialog_form') {
+      $form['attributes']['id']['#access'] = false;
+      $form['attributes']['class']['#access'] = false;
+
+  }
+}
+

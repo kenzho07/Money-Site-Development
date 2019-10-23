@@ -1,0 +1,14 @@
+uuid: e495aab8-58b6-43bb-943f-5f0e03e3595f
+langcode: en
+status: true
+dependencies:
+  config:
+    - domain.record.tourist_dev_ops_xyz
+  module:
+    - domain_access
+id: domain_access_remove_editor_action.tourist_dev_ops_xyz
+label: 'Remove editors from the CMS Portal - Tourist Dev Sites domain'
+type: user
+plugin: domain_access_remove_editor_action
+configuration:
+  domain_id: tourist_dev_ops_xyz

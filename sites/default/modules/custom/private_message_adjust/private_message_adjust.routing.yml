@@ -1,0 +1,16 @@
+private_message_adjust.my_page:
+  path: '/admin/custom/private_message_adjust'
+  defaults:
+    _controller: '\Drupal\private_message_adjust\Controller\PrivateMessageAdjustController::privateMessageAdjust'
+    _title: 'JS adjustment for private message'
+  method: [GET]
+  requirements: 
+    _permission: 'access content'
+
+private_message.members_widget_callback:
+  path: '/private_message/autocomplete/members'
+  defaults:
+    _controller: '\Drupal\private_message_adjust\Controller\PrivateMessageAdjustAutocompleteController::privateMessageMembersAutocomplete'
+  requirements:
+    _csrf_token: 'TRUE'
+    _user_is_logged_in: 'TRUE'

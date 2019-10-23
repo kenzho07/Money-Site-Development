@@ -1,0 +1,14 @@
+uuid: 1fe96eba-0319-4ea3-916f-71f6300ad19c
+langcode: en
+status: true
+dependencies:
+  config:
+    - domain.record.portal_dev_ops_xyz
+  module:
+    - domain_access
+id: domain_access_add_action.portal_dev_ops_xyz
+label: 'Add selected content to the CMS Portal - Money Dev Sites domain'
+type: node
+plugin: domain_access_add_action
+configuration:
+  domain_id: portal_dev_ops_xyz

@@ -1,0 +1,197 @@
+<?php
+/**
+ * @file
+ * Module file for ms_general_custom.
+ */
+use Drupal\views\ViewExecutable;
+use Drupal\views\Plugin\views\query\Sql;
+use Drupal\Core\Link;
+use Drupal\Core\Url;
+use Drupal\node\NodeInterface;
+
+/**
+ * Implements of template_preprocess_page().
+ * @param $variables
+ */
+function ms_general_custom_preprocess_page(&$variables) {
+  if (isset($variables['node'])) {
+    $node = $variables['node'];
+    if (!$node instanceof \Drupal\node\NodeInterface) {
+      $node_storage = \Drupal::entityTypeManager()->getStorage('node');
+      $node = $node_storage->load($node);
+    }
+    if ($node->gettype() == 'site_posts' && empty($node->in_preview) && node_is_page($node) && !$node->isNew()) {
+      $variables['#attached']['library'][] = 'statistics/drupal.statistics';
+      $settings = ['data' => ['nid' => $node->id()], 'url' => \Drupal::request()->getBasePath() . '/' . drupal_get_path('module', 'statistics') . '/statistics.php'];
+      $variables['#attached']['drupalSettings']['statistics'] = $settings;
+    }
+  }
+}
+
+/**
+ * Hook_module_implements_alter().
+ * @param $implementations
+ * @param $hook
+ */
+function ms_general_custom_module_implements_alter(&$implementations, $hook) {
+  if ($hook == 'form_alter') {
+    $group = $implementations['ms_general_custom'];
+    unset($implementations['ms_general_custom']);
+    $implementations['ms_general_custom'] = $group;
+  }
+}
+
+/**
+ * Hook_form_alter().
+ * @param $form
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ * @param $form_id
+ */
+function ms_general_custom_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id) {
+  if ($form_id == 'editor_link_dialog' || $form_id == 'linkit_editor_dialog_form') {
+    $form['attributes']['id']['#access'] = false;
+    $form['attributes']['class']['#access'] = false;
+    $form['linkit_attributes']['id']['#access'] = FALSE;
+    $form['linkit_attributes']['class']['#access'] = FALSE;
+  }
+
+  if ($form_id == 'editor_image_dialog' || $form_id == 'editor_image_dialog_form') {
+    $form['attributes']['id']['#access'] = false;
+    $form['attributes']['class']['#access'] = false;
+
+  }
+
+  if ($form_id == 'node_site_posts_form' || $form_id == 'node_site_posts_edit_form') {
+    $form['field_domain_access']['widget']['#multiple'] = FALSE;
+    $options = $form['field_domain_access']['widget']['#options'];
+    array_shift($options);
+    $form['field_domain_access']['widget']['#options'] = $options;
+    $form['field_domain_access']['widget']['#default_value'] = [];
+  }
+}
+
+/**
+ *  hook_ckeditor_css_alter().
+ */
+function ms_general_custom_ckeditor_css_alter(array &$css, \Drupal\editor\Entity\Editor $editor) {
+  // Add custom css to ckeditor while using copy paste from Word doc
+  $css[] = drupal_get_path('module', 'ms_general_custom') . '/css/pastefromthewordextension-ckeditor.css';
+}
+
+/**
+ * Implements hook_views_query_alter().
+ */
+function ms_general_custom_views_query_alter(ViewExecutable $view, Sql $query) {
+ // Applied for related articles view block to pass node from page alias
+ $view_id = $view->storage->id();
+ $view_display = $view->current_display;
+ if (($view_id == 'related_articles_revised' && $view_display == 'block_1')) {
+    // Fetch current node
+    $node = \Drupal::routeMatch()->getParameter('node');
+    if(isset($node)) {
+      if (!$node instanceof \Drupal\node\NodeInterface) {
+        $node_storage = \Drupal::entityTypeManager()->getStorage('node');
+        $node = $node_storage->load($node);
+      }
+      // You can get nid and anything else you need from the node object.
+      $nid = $node->id();
+      foreach ($query->where as &$condition_group) {
+        foreach ($condition_group['conditions'] as &$condition) {
+          // condition to filter on node ID.
+          if (strpos($condition['field'], 'node_field_data.nid') === true) {
+            $condition['value'] = array( ':node_field_data_nid'  =>  $nid );
+          }
+        }
+      }
+    }
+  }
+}
+/**
+ * Implements hook_views_pre_render().
+ */
+function ms_general_custom_views_pre_render(ViewExecutable $view) {
+$view_id = $view->storage->id();
+$view_display = $view->current_display;
+if (($view_id == 'related_articles_revised' && $view_display == 'block_1')) {
+  foreach($view->result as $row){
+      $nid = $row->node__field_related_articles_new_field_related_articles_new_;
+      $node_storage = \Drupal::entityTypeManager()->getStorage('node');
+      $node = $node_storage->load($nid);
+      $row->title =  $node->title->value;
+      $row->body =  $node->body->value; // $node->body->summary;
+      $row->image_path = '';
+      if(isset($node->field_featured_image->target_id)){
+        $fid = $node->field_featured_image->target_id;
+        $file_storage = \Drupal::entityTypeManager()->getStorage('file');
+        $file = $file_storage->load($fid);
+        $row->image_path = $file->getFileUri();
+      }
+
+      $row->title =  $node->title->value;
+      $path = '/node/' . (int) $nid;
+      $langcode = \Drupal::languageManager()->getCurrentLanguage()->getId();
+      $row->path_alias = \Drupal::service('path.alias_manager')->getAliasByPath($path, $langcode);
+    }
+  }
+}
+
+
+ /***
+   * Implementing hook_form_FORM_ID_alter
+   * @param $form
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   * @param $form_id
+   */
+
+function ms_general_custom_form_node_site_posts_edit_form_alter(&$form, \Drupal\Core\Form\FormStateInterface &$form_state, $form_id) {
+
+  if ($form_id == 'node_site_posts_edit_form') {
+    //Getting the current state
+    $current_state = $form['moderation_state']['widget']['0']['current']['#markup'];
+
+    if ($current_state == 'Approve and Published') {
+
+      //Getting the current or old_array for state options.
+      $old_array = $form['moderation_state']['widget']['0']['state']['#options'];
+
+      //Reverse the old_array into new_array.
+      $new_array = array_reverse($old_array, true);
+
+      // Setting up the old_array into the new_array.
+      $form['moderation_state']['widget']['0']['state']['#options'] = $new_array;
+    }
+
+  }
+
+}
+
+function ms_general_custom_mail_alter(&$message) {
+   global $base_url;
+  if ($message['id'] == 'content_moderation_notifications_content_moderation_notification') {
+    $alias = $nodeTitle = "";
+    if (isset($message['params']['context']['node'])) {
+      $node = $message['params']['context']['node'];
+      if ($node instanceof NodeInterface) {
+        $alias = '/node/' . $node->id();
+        $nodeTitle = $node->getTitle();
+        $aliasArray =\Drupal::service('path.alias_storage')->load(['source' => $alias]);
+        if (is_array($aliasArray) && isset($aliasArray['alias']) && !empty($aliasArray['alias'])) {
+          $alias = $aliasArray['alias'];
+        }
+      }
+    }
+    // //Putting the value of the body inside $messageTemp
+    $tag = '<a href=' .$base_url.$alias .'>Click here to view your article.</a>';
+    $message['body'][0] = str_replace("[viewurlpublished]", $tag, $message['body'][0]);
+    $message['body'][0] = str_replace("[viewurlarticlepost]", '<a href=' . \Drupal::request()->getRequestUri() . '>Click here to edit your article. </a>', $message['body'][0]);
+    if ($nodeTitle) {
+      $message['body'][0] = str_replace("[contenttitle]", $nodeTitle, $message['body'][0]);
+    }
+  }
+	if ($message['id'] == 'content_moderation_notifications_content_moderation_notification') {
+    $message['body'][0] = str_replace("[viewurl]", '<a href=' . \Drupal::request()->getRequestUri() . '>Click here to view your article.</a>', $message['body'][0]);
+  }
+
+}
+
+

@@ -1,0 +1,9 @@
+login_redirection:
+  anonymous: null
+  authenticated: /user
+  administrator: /admin/workbench
+  team_leader: /admin/workbench
+  editor: /admin/workbench
+  sub_editor: /admin/workbench
+  freelancer: /admin/workbench
+exclude_urls: ''

@@ -1,0 +1,14 @@
+uuid: 15b1e32b-0b5d-4c89-8653-417407eeadfb
+langcode: en
+status: true
+dependencies:
+  config:
+    - domain.record.portal_dev_ops_xyz
+  module:
+    - domain_access
+id: domain_access_add_editor_action.portal_dev_ops_xyz
+label: 'Add editors to the CMS Portal - Money Dev Sites domain'
+type: user
+plugin: domain_access_add_editor_action
+configuration:
+  domain_id: portal_dev_ops_xyz

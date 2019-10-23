@@ -1,0 +1,19 @@
+uuid: 26a557e1-fd86-451f-b033-972945b77eb0
+langcode: en
+status: true
+dependencies: {  }
+id: publish_reviewed_content
+workflow: editorial
+transitions:
+  publishe_reviewed_content: publishe_reviewed_content
+roles:
+  administrator: administrator
+  team_leader: team_leader
+  editor: editor
+author: true
+emails: ''
+subject: 'CMS Portal - Content has been successfully Published'
+body:
+  value: "<p>Hi,&nbsp;</p>\r\n\r\n<p>Congratulation! Your content is successfully Published by [current-user:display-name].</p>\r\n\r\n<p>[viewurlpublished]</p>\r\n\r\n<p>- CMS Portal</p>\r\n\r\n<p>&nbsp;</p>\r\n"
+  format: full_html
+label: 'Publish Reviewed Content'

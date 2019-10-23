@@ -1,0 +1,14 @@
+uuid: 4b65a10a-9ef9-433f-b16c-4d169a7e7d7c
+langcode: en
+status: true
+dependencies: {  }
+name: 1160x653
+label: '1160 x 653'
+effects:
+  4d57822d-167a-4b96-98b7-bcdc5e74756a:
+    uuid: 4d57822d-167a-4b96-98b7-bcdc5e74756a
+    id: image_resize
+    weight: 1
+    data:
+      width: 1160
+      height: 653

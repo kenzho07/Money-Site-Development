@@ -1,0 +1,11 @@
+uuid: 786e4a4e-4dbf-4a37-9b6c-bd3baf4c9a49
+langcode: en
+status: true
+dependencies: {  }
+id: tourist_dev_ops_xyz
+domain_id: 14402020
+hostname: wp-tourist.ieplsg.com
+name: 'CMS Portal - Tourist Dev Sites'
+scheme: http
+weight: -2
+is_default: false

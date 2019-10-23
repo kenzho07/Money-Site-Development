@@ -1,0 +1,16 @@
+ms_data_migration.cron_url:
+  path: '/admin/config/system/cron/ms_data_migration/{token}'
+  defaults:
+    _controller: '\Drupal\ms_data_migration\Controller\DataMigrationController::migrateData'
+    _title: 'Cron endpoint for data migration from WP sites'
+  method: [GET]
+  requirements:
+    _custom_access: '\Drupal\ms_data_migration\Controller\DataMigrationController::checkValidToken'
+
+ms_data_migration.admin:
+  path: '/admin/config/moneysite/api-config'
+  defaults:
+    _title: 'REST API Config'
+    _form: 'Drupal\ms_data_migration\Form\MsDataMigrateApiConfigForm'
+  requirements:
+    _permission: 'access rest api config page'

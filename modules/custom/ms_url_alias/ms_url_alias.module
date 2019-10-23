@@ -1,0 +1,114 @@
+<?php
+
+use Drupal\node\NodeInterface;
+
+/**
+ * hook_entityType_insert
+ * @param NodeInterface $node
+ */
+function ms_url_alias_node_insert(NodeInterface $node) {
+  if ($node->getType() == 'site_posts') {
+    // update_url_alias($node);
+  }
+}
+
+/**
+ * hook_entityType_update
+ * @param NodeInterface $node
+ */
+function ms_url_alias_node_update(NodeInterface $node) {
+  if ($node->getType() == 'site_posts') {
+    // update_url_alias($node);
+  }
+}
+
+/**
+ * custom function to update url alias
+ * @param NodeInterface $node
+ */
+function update_url_alias(NodeInterface $node) {
+  $term = get_term_of_site_post($node);
+  if ($term) {
+    $term = strtolower($term);
+    if ((int)substr($term, 0, 1)) {
+      $term = 'a_' . $term;
+    }
+    //fetching alias
+    //loading alias data
+    $aliasArray = \Drupal::service('path.alias_storage')->load(['source' => '/node/' . $node->id()]);
+    $pid = isset($aliasArray['pid']) ? $aliasArray['pid'] : null;
+    if ($pid) {
+      \Drupal::service('path.alias_storage')->delete(array('pid' => $pid));
+    }
+
+    $langcode = \Drupal::languageManager()->getCurrentLanguage()->getId();
+    $source = \Drupal::service('path.alias_manager')->getAliasByPath("/node/" . $node->id(), $langcode);
+    //save new alias
+    if ($source) {
+      $pathTitle = substr(str_replace(" ", "_", trim(strtolower($node->getTitle()))), 0, 40);
+      $new_alias = '/' . $term . '/' . $pathTitle;
+      $existAlias = \Drupal::service('path.alias_storage')->aliasExists($new_alias, $langcode);
+      if (!$existAlias) {
+        \Drupal::service('path.alias_storage')->save($source, $new_alias, $langcode, $pid = null);
+      }
+    } 
+	else {
+      drupal_set_message('source not found!', 'error');
+    }
+  }
+}
+
+/**
+ * get taxonomy primary
+ * @param NodeInterface $node
+ * @return mixed|void
+ */
+function get_term_of_site_post(NodeInterface $node) {
+
+  $config = \Drupal::service('config.factory')->getEditable('ms_domain_vocab.settings');
+
+  $domains = \Drupal::service('domain.loader')->loadMultipleSorted();
+  $domainsWithCat = [];
+
+  if ($domains) {
+    foreach ($domains as $domain) {
+      $domainId = $domain->id();
+      $hostname = $domain->get('name');
+      if ($config->get($domainId . '_site')) {
+        $domainsWithCat[$domainId] = $config->get($domainId . '_site');
+      }
+    }
+  }
+  
+  $domain_id = null;
+  $fieldDefination = $node->getFieldDefinitions();
+
+  $domain = $node->get('field_domain_access')->entity;
+  if ($domain) {
+    $domain_id = $domain->id();
+  }
+  if ($fieldDefination && $domain_id) {
+    foreach ($fieldDefination as $fieldname => $value) {
+      if ($node->hasField($fieldname) && $node->get($fieldname)->entity) {
+        if ($value && !empty($value->getSettings()) && isset($value->getSettings()['target_type']) && $value->getSettings()['target_type'] == 'taxonomy_term') {
+          if (isset($value->getSettings()['handler_settings']['target_bundles'])) {
+            $termValue = $value->getSettings()['handler_settings']['target_bundles'];
+            if (is_array($termValue) && !empty(current($termValue))) {
+              if (current($termValue) == $domainsWithCat[$domain_id]) {
+                //this is field value required
+                if ($node->hasField($fieldname) && stripos($fieldname, 'primary') !== false) {
+                  $primaryCat = $node->get($fieldname)->entity;
+                  if ($primaryCat) {
+
+                    return str_replace(" ", "_", $primaryCat->getName());
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  return;
+}

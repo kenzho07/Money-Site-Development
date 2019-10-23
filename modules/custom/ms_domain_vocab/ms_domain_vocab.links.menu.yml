@@ -1,0 +1,6 @@
+ms_domain_vocab.domain_vocab:
+  title: Domain vocab switch
+  route_name: ms_domain_vocab.settings
+  description: 'Manage vocab for specific domains.'
+  parent: domain.admin
+  weight: 10

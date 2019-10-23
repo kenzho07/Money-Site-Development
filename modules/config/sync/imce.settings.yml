@@ -1,0 +1,17 @@
+abs_urls: false
+admin_theme: true
+roles_profiles:
+  authenticated:
+    public: admin
+  administrator:
+    public: admin
+  team_leader:
+    public: admin
+  editor:
+    public: admin
+  sub_editor:
+    public: admin
+  freelancer:
+    public: admin
+_core:
+  default_config_hash: 4FhrEwOM9yJ8neEoN77sxroTRBUXqRwap0KSJtFnYJs

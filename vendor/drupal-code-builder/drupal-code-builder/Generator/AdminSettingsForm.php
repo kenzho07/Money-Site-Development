@@ -32,6 +32,13 @@ class AdminSettingsForm extends Form {
       return $component_data['root_component_name'] . '_settings_form';
     };
 
+    $data_definition['route_name'] = [
+      'computed' => TRUE,
+      'default' => function($component_data) {
+        return $component_data['root_component_name'] . '.settings';
+      },
+    ];
+
     return $data_definition;
   }
 
@@ -73,7 +80,7 @@ class AdminSettingsForm extends Form {
     $components['getEditableConfigNames'] = [
       'component_type' => 'PHPFunction',
       'containing_component' => '%requester',
-      'doxygen_first' => '{@inheritdoc}',
+      'docblock_inherit' => TRUE,
       'declaration' => 'protected function getEditableConfigNames()',
       'body' => "return ['%module.settings'];",
     ];
@@ -88,11 +95,11 @@ class AdminSettingsForm extends Form {
     $components['route'] = array(
       'component_type' => 'RouterItem',
       // Specify this so we can refer to it in the menu link.
-      'route_name' => "{$this->component_data['root_component_name']}.settings",
+      'route_name' => $this->component_data['route_name'],
       // OK to use a token here, as the YAML value for this will be quoted
       // anyway.
       'path' => $settings_form_path,
-      'title' => 'Administer %readable',
+      'title' => 'Administer %lower',
       'controller_type' => 'form',
       'controller_type_value' => '\\' . $this->component_data['qualified_class_name'],
       'access_type' => 'permission',
@@ -104,9 +111,9 @@ class AdminSettingsForm extends Form {
       'plugin_type' => 'menu.link',
       'plugin_name' => 'settings',
       'plugin_properties' => [
-        'title' => '%Module',
-        'description' => 'Configure the settings for %Module.',
-        'route_name' => "{$this->component_data['root_component_name']}.settings",
+        'title' => '%sentence',
+        'description' => 'Configure the settings for %lower.',
+        'route_name' => $this->component_data['route_name'],
         'parent' => $this->component_data['parent_route'],
       ],
     ];
@@ -114,20 +121,21 @@ class AdminSettingsForm extends Form {
     $components['administer %module'] = array(
       'component_type' => 'Permission',
       'permission' => 'administer %module',
+      'title' => 'Administer %sentence',
     );
 
     $components['info_configuration'] = array(
       'component_type' => 'InfoProperty',
       'property_name' => 'configure',
-      'property_value' => $settings_form_path,
+      'property_value' => $this->component_data['route_name'],
     );
 
     $components["config/schema/%module.schema.yml"] = [
       'component_type' => 'ConfigSchema',
       'yaml_data' => [
-         $this->component_data['root_component_name'] . '.settings' => [
+        $this->component_data['route_name'] => [
            'type' => 'config_object',
-           'label' => '%Module settings',
+           'label' => '%sentence settings',
           'mapping' => [
           ],
         ],

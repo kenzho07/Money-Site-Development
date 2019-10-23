@@ -1,0 +1,4 @@
+custom:
+  version: 1.x
+  js:
+    js/ms_custom.js: {}

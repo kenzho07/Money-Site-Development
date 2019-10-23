@@ -2,9 +2,9 @@
 
 namespace Drupal\Tests\content_moderation_notifications\Functional\Form;
 
-use Drupal\Component\Utility\Unicode;
 use Drupal\content_moderation_notifications\Entity\ContentModerationNotification;
-use Drupal\simpletest\ContentTypeCreationTrait;
+use Drupal\Tests\content_moderation_notifications\Kernel\ContentModerationNotificationTestTrait;
+use Drupal\Tests\node\Traits\ContentTypeCreationTrait;
 use Drupal\Tests\BrowserTestBase;
 use Drupal\workflows\Entity\Workflow;
 
@@ -16,6 +16,7 @@ use Drupal\workflows\Entity\Workflow;
 class CrudFormTest extends BrowserTestBase {
 
   use ContentTypeCreationTrait;
+  use ContentModerationNotificationTestTrait;
 
   /**
    * An admin user.
@@ -54,6 +55,8 @@ class CrudFormTest extends BrowserTestBase {
 
     // Add local actions block.
     $this->placeBlock('local_actions_block');
+
+    $this->createEditorialWorkflow();
   }
 
   /**
@@ -67,7 +70,7 @@ class CrudFormTest extends BrowserTestBase {
     // Test the add form.
     $edit = [
       'label' => $this->randomString(),
-      'id' => Unicode::strtolower($this->randomMachineName()),
+      'id' => mb_strtolower($this->randomMachineName()),
       'workflow' => 'editorial',
       'transitions[create_new_draft]' => TRUE,
       'transitions[archived_published]' => TRUE,
@@ -129,7 +132,7 @@ class CrudFormTest extends BrowserTestBase {
     $this->drupalGet($notification->toUrl('delete-form'));
     $this->drupalPostForm(NULL, [], t('Delete Notification'));
     $this->assertSession()->responseContains(t('Notification %label was deleted.', ['%label' => $notification->label()]));
-    $this->assertSession()->pageTextContains(t('There is no Notification yet.'));
+    $this->assertSession()->pageTextContains(t('There are no notifications yet.'));
   }
 
   /**

@@ -1,0 +1,59 @@
+<?php
+
+/**
+ * Implements ms_keyword_auto_form_alter().
+ *
+ */
+
+use Drupal\Core\Form\FormStateInterface;
+
+function ms_keyword_auto_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+
+  if ($form_id === 'node_site_posts_edit_form' || $form_id === 'node_site_posts_form') {
+
+    $form['field_meta_tags']['widget']['0']['basic']['keywords']['#default_value'] = keyword_callback($form);
+  }
+}
+
+//Function that generate keywords.
+function getLongTailKeywords($str, $len = 2, $min = 6) {
+  $keywords = array();
+  $config = \Drupal::config('ms_keyword_auto.settings');
+  $common = $config->get('ignore_words');
+   //$common = array('i','a','about','an','and','are','as','at','be','by','com','de','en','for','from','how','in','is','it','la','of','on','or','that','the','this','to','was','what','when','where','who','will','with','und','the','www','nbsp','&nbsp');
+ 
+  $str = preg_replace('/[^a-z0-9\s-]+/', '', strtolower(strip_tags($str)));
+  $str = preg_split('/\s+-\s+|\s+/', $str, -1, PREG_SPLIT_NO_EMPTY);
+  while (0 < $len--) for ($i = 1; $i < count($str) - $len; $i++) {
+    $word = array_slice($str, $i, $len);
+    if (in_array($word[0], $common) || in_array(rand($word), $common)) continue;
+    $word = implode('', $word);
+    if (!isset($keywords[$len][$word]))
+      $keywords[$len][$word] = 0;
+	  $keywords[$len][$word]++;
+  }
+  $return = array();
+  foreach ($keywords as &$keyword) {
+    $keyword = array_filter($keyword, function ($v) use ($min) {
+      return !!($v > $min);
+    });
+    arsort($keyword);
+    $return = array_merge($return, $keyword);
+  }
+  //$string = preg_replace('/\s+/','',$return);
+  return $return;
+}
+function keyword_callback($form) {
+  //Target the body of Post Article.
+  $body_value = strip_tags($form['body']['widget']['0']['#default_value']);
+  $word_pieces = explode(',	', $body_value, 10);
+  $word_concatenate = '';
+  foreach ($word_pieces as $key => $value) {
+    if ($key < 9) {
+      $word_concatenate .= rtrim($value, ',') . ',';
+    }
+  }
+  var_dump(getLongTailKeywords($word_concatenate));
+  return array_flip(getLongTailKeywords($word_concatenate));
+
+}

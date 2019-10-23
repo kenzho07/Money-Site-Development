@@ -1,0 +1,41 @@
+uuid: 7188a1ed-9f2d-4413-858f-27be423ee2f8
+langcode: en
+status: true
+dependencies: {  }
+id: freelancer
+label: Freelancer
+weight: 6
+is_admin: null
+permissions:
+  - 'access content overview'
+  - 'access domain content'
+  - 'access panels in-place editing'
+  - 'access toolbar'
+  - 'access workbench'
+  - 'administer panelizer node site_posts content'
+  - 'administer panelizer node site_posts layout'
+  - 'administer panelizer node site_posts revert'
+  - 'administer private_message display'
+  - 'administer private_message_thread display'
+  - 'create domain content'
+  - 'create site_posts content'
+  - 'create site_posts content on assigned domains'
+  - 'delete own site_posts content'
+  - 'domain administration theme'
+  - 'edit own site_posts content'
+  - 'publish to any assigned domain'
+  - 'publish to any domain'
+  - 'use editorial transition archived_published'
+  - 'use editorial transition create_new_draft'
+  - 'use editorial transition create_new_revision'
+  - 'use editorial transition return_draft'
+  - 'use editorial transition submit_draft_for_review'
+  - 'use text format full_html'
+  - 'view all revisions'
+  - 'view any unpublished content'
+  - 'view latest version'
+  - 'view own unpublished content'
+  - 'view pane admin links'
+  - 'view site_posts revisions'
+  - 'view the administration theme'
+  - 'view unpublished domain content'

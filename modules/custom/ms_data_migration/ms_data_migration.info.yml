@@ -1,0 +1,5 @@
+name: Drupal - WP Sites (REST) API Integration
+type: module
+description: 'Formerly known as "Data Migration module for updating data from subsites APIs".'
+package: Money Site
+core: 8.x

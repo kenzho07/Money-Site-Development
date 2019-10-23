@@ -1,0 +1,5 @@
+ms_csv_importer.form:
+  title: Money Site CSV importer
+  description: 'Import data from CSV'
+  parent: system.admin_config_development
+  route_name: ms_csv_importer.form

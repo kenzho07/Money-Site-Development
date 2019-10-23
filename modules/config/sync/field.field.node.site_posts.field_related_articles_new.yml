@@ -1,0 +1,30 @@
+uuid: 6e311cba-8d3b-4fc1-bd06-7b9be92f1aa5
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_related_articles_new
+    - node.type.backlinks_related_articles
+    - node.type.site_posts
+id: node.site_posts.field_related_articles_new
+field_name: field_related_articles_new
+entity_type: node
+bundle: site_posts
+label: 'Related Articles'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:node'
+  handler_settings:
+    target_bundles:
+      backlinks_related_articles: backlinks_related_articles
+      site_posts: site_posts
+    sort:
+      field: title
+      direction: ASC
+    auto_create: false
+    auto_create_bundle: backlinks_related_articles
+field_type: entity_reference

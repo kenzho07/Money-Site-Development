@@ -1,0 +1,25 @@
+uuid: fb275f5c-91c9-4767-9e99-c24f030c258c
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_domain_source
+    - node.type.site_posts
+id: node.site_posts.field_domain_source
+field_name: field_domain_source
+entity_type: node
+bundle: site_posts
+label: 'Available Sites'
+description: 'Select which site for the content to be published to.'
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:domain'
+  handler_settings:
+    target_bundles: null
+    sort:
+      field: weight
+      direction: ASC
+field_type: entity_reference

@@ -1,0 +1,8 @@
+name: Money Site General Custom Module.
+type: module
+description: 'Custom module that contains general hook/function/alteration for Money Site.'
+package: Money Site
+core: 8.x
+# Dependencies
+dependencies:
+  - views

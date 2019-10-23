@@ -1,0 +1,14 @@
+uuid: 5046756a-f26c-4898-9f2e-fb7b577e685f
+langcode: en
+status: true
+dependencies: {  }
+name: 768x508
+label: '768 x 508'
+effects:
+  bac014d0-1353-4acd-b096-2ec1587bd622:
+    uuid: bac014d0-1353-4acd-b096-2ec1587bd622
+    id: image_resize
+    weight: 1
+    data:
+      width: 768
+      height: 508

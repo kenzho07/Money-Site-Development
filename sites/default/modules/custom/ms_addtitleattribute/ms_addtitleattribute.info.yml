@@ -1,0 +1,6 @@
+name: Add Title attributes fields in Image modal on CKEditor
+type: module
+description: 'Add Title attributes fields in Image modal on CKEditor'
+package: Custom
+version: 8.x
+core: 8.x

@@ -1,0 +1,30 @@
+<?php
+
+/**
+ * @file
+ * Module file for ms_domain_vocab.
+ */
+
+/**
+ * Implements of hook_form_alter().
+ */
+function ms_domain_vocab_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id) {
+  if ($form_id == 'node_site_posts_edit_form' || $form_id == 'node_site_posts_form') {
+    $form['#attached']['library'][] = 'ms_domain_vocab/ms_domain_vocab.library';
+
+    $ms_domain_vocab_config = \Drupal::config('ms_domain_vocab.settings')->get();
+    $exclude_ms_domain_settings = [
+      'ms_domain_vocab',
+      '_core',
+    ];
+
+    $sites_list = [];
+    foreach ($ms_domain_vocab_config as $key => $value) {
+      if (!in_array($key, $exclude_ms_domain_settings)) {
+        $sites_list[$key] = $value;
+      }
+    }
+
+    $form['#attached']['drupalSettings']['msDomainVocab']['sitesList'] = $sites_list;
+  }
+}
